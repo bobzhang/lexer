@@ -2,9 +2,9 @@
   "name": "bob/lexer",
   "version": "0.1.0",
   "readme": "README.md",
-  "repository": "",
+  "repository": "https://github.com/bobzhang/bob",
   "license": "Apache-2.0",
-  "keywords": [],
-  "description": "",
+  "keywords": ["lexer",  "programming language"],
+  "description": "A generic lexer library for handwritten lexers in MoonBit",
   "source": "src"
 }
