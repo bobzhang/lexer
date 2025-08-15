@@ -15,7 +15,10 @@ A robust lexer implementation for TOML (Tom's Obvious, Minimal Language) with pr
 
 The `Position` struct tracks location information in the input:
 
-```moonbit
+<!-- TODO: how to express such paradigm, maybe we should just 
+    allow hyperlink
+ -->
+```moonbit nocheck
 pub(all) struct Position {
   line : Int
   column : Int
