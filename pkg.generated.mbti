@@ -1,9 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "bob/toml/lexer"
-
-import(
-  "moonbitlang/core/string"
-)
+package "bob/lexer"
 
 // Values
 
@@ -23,13 +19,18 @@ fn Lexer::peek(Self) -> Char?
 fn Lexer::peek_charcode(Self) -> Int?
 fn Lexer::skip_single_newline(Self) -> Unit
 fn Lexer::skip_whitespace(Self) -> Unit
-fn Lexer::update_view(Self, @string.StringView) -> Unit
-fn Lexer::view(Self) -> @string.StringView
+fn Lexer::update_view(Self, StringView) -> Unit
+fn Lexer::view(Self) -> StringView
 
 pub(all) struct Position {
   line : Int
   column : Int
 }
+fn Position::equal(Self, Self) -> Bool // from trait `Eq`
+fn Position::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn Position::output(Self, &Logger) -> Unit // from trait `Show`
+fn Position::to_json(Self) -> Json // from trait `ToJson`
+fn Position::to_string(Self) -> String // from trait `Show`
 impl Eq for Position
 impl Show for Position
 impl ToJson for Position

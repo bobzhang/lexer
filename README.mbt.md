@@ -1,13 +1,21 @@
-# TOML Lexer
+# bob/lexer
 
-A robust lexer implementation for TOML (Tom's Obvious, Minimal Language) with precise position tracking and error reporting.
+A generic lexer library for building handwritten lexers in MoonBit. This library provides essential lexing utilities including position tracking, character advancement, whitespace handling, and error reporting.
 
 ## Features
 
-- **Position Tracking**: Accurate line and column tracking for detailed error reporting
-- **Unicode Support**: Proper handling of multi-byte characters and surrogate pairs
+- **Position Tracking**: Accurate line and column tracking for better error reporting
+- **Unicode Support**: Proper handling of surrogate pairs and multi-byte characters
+- **Flexible Character Handling**: Peek, advance, and expect specific characters or strings
+- **Whitespace Management**: Skip whitespace while preserving significant newlines
 - **String View Integration**: Efficient string processing using MoonBit's string views
-- **Error Handling**: Detailed error messages with position information
+- **Error Reporting**: Detailed error messages with position information
+
+## Installation
+
+```bash
+moon add bob/lexer
+```
 
 ## Types
 
@@ -15,9 +23,6 @@ A robust lexer implementation for TOML (Tom's Obvious, Minimal Language) with pr
 
 The `Position` struct tracks location information in the input:
 
-<!-- TODO: how to express such paradigm, maybe we should just 
-    allow hyperlink
- -->
 ```moonbit nocheck
 pub(all) struct Position {
   line : Int
@@ -27,12 +32,44 @@ pub(all) struct Position {
 
 ### Lexer
 
-The main lexer struct maintains state and position (defined in the lexer.mbt file):
+The main lexer struct maintains state and position:
 
 - `input: String` - The input text being lexed
 - `position: Int` - Current byte position in input  
 - `line: Int` - Current line number (1-based)
 - `column: Int` - Current column position (1-based)
+
+## Quick Start
+
+```moonbit
+test "quick start example" {
+  let lexer = Lexer::new("key = value")
+
+  // Peek at current character without advancing
+  match lexer.peek() {
+    Some('k') => inspect("Found 'k'", content="Found 'k'")
+    _ => ()
+  }
+
+  // Advance through characters
+  lexer.advance() // moves to 'e'
+  lexer.advance() // moves to 'y'
+  lexer.advance() // moves to ' '
+
+  // Skip whitespace
+  lexer.skip_whitespace() // skips spaces, tabs, carriage returns
+
+  // Expect specific characters or strings
+  lexer.expect_char('=') // advances if '=' is found, otherwise raises error
+  lexer.skip_whitespace()
+  lexer.expect_string("value") // expects and consumes "value"
+
+  // Get current position for error reporting
+  let pos = lexer.get_loc() // returns Position { line: 1, column: 12 }
+  inspect(pos.line, content="1")
+  inspect(pos.column, content="12")
+}
+```
 
 ## Basic Usage
 
@@ -67,13 +104,58 @@ test "position tracking example" {
 }
 ```
 
+## API Reference
+
+### Methods
+
+#### Creation
+- `Lexer::new(input : String) -> Lexer` - Create a new lexer with the given input
+
+#### Character Operations
+- `peek() -> Char?` - Get current character without advancing
+- `advance() -> Unit` - Advance to next character (handles Unicode properly)
+- `expect_char(ch : Char, msg? : String) -> Unit raise` - Expect and consume a specific character
+
+#### String Operations
+- `expect_string(str : String, msg? : String) -> Unit raise` - Expect and consume a specific string
+- `view() -> StringView` - Get a view of the remaining input
+- `update_view(view : StringView) -> Unit` - Update position based on a new view
+
+#### Whitespace Handling
+- `skip_whitespace() -> Unit` - Skip spaces, tabs, and carriage returns (not newlines)
+- `skip_single_newline() -> Unit` - Skip a single newline and update line tracking
+
+#### Position Tracking
+- `get_loc() -> Position` - Get current line and column position
+- `get_position() -> Int` - Get current byte position in input
+- `new_line() -> Unit` - Explicitly advance to new line (updates line/column tracking)
+
+#### Error Handling
+- `error(msg : String) -> String` - Create detailed error message with position info
+
+## Core Methods
+
+```moonbit
+test "position tracking example" {
+  let lexer = Lexer::new("hello\nworld")
+  inspect(lexer.get_loc().line, content="1")
+  inspect(lexer.get_loc().column, content="1")
+
+  // Advance through characters
+  lexer.advance() // h
+  inspect(lexer.get_loc().column, content="2")
+
+  // Handle newlines explicitly
+  lexer.advance() // move past \n
+  lexer.new_line() // update line tracking
+  inspect(lexer.get_loc().line, content="2")
+  inspect(lexer.get_loc().column, content="1")
+}
+```
+
 ## Core Methods
 
 ### Character Access
-
-- **`peek()`**: Get current character without advancing
-- **`advance()`**: Move to next character with position tracking
-- **`peek_charcode()`**: Get character code at current position
 
 ```moonbit
 test "character access example" {
@@ -128,7 +210,7 @@ test "expectations example" {
 }
 ```
 
-## Advanced Features
+## Advanced Usage
 
 ### Unicode Support
 
@@ -159,10 +241,57 @@ test "position management example" {
 }
 ```
 
-## Example: Basic TOML Parsing
+### Position-Aware Error Handling
 
 ```moonbit
-test "basic TOML parsing example" {
+test "position aware error handling example" {
+  let lexer = Lexer::new("abc")
+  lexer.advance() // move to 'b'
+  lexer.advance() // move to 'c'
+  let start_pos = lexer.get_loc()
+  let msg = "Invalid identifier at line " + start_pos.line.to_string()
+  inspect(msg, content="Invalid identifier at line 1")
+}
+```
+
+### Custom Lexer Implementation
+
+```moonbit
+test "custom lexer implementation example" {
+  let lexer = Lexer::new("a=b")
+  let tokens = []
+  
+  // Simple tokenization - process each character
+  while lexer.peek() is Some(_) {
+    lexer.skip_whitespace()
+    match lexer.peek() {
+      None => ()
+      Some('=') => {
+        lexer.advance()
+        tokens.push("EQUALS")
+      }
+      Some(c) if c.is_ascii_alphabetic() => {
+        let mut identifier = ""
+        while lexer.peek() is Some(ch) && ch.is_ascii_alphabetic() {
+          identifier = identifier + Char::to_string(ch)
+          lexer.advance()
+        }
+        tokens.push("ID:" + identifier)
+      }
+      Some(_) => {
+        lexer.advance() // skip unknown characters
+      }
+    }
+  }
+  
+  inspect(tokens, content="[\"ID:a\", \"EQUALS\", \"ID:b\"]")
+}
+```
+
+## Example: Basic Parsing
+
+```moonbit
+test "basic parsing example" {
   let lexer = Lexer::new("key = \"value\"")
 
   // Skip initial whitespace
@@ -194,9 +323,6 @@ test "basic TOML parsing example" {
 }
 ```
 
-## Package Information
+## License
 
-- **Package**: `bob/toml/lexer`
-- **Dependencies**: `moonbitlang/core/string`
-
-This lexer is designed specifically for TOML parsing but can be adapted for other text processing tasks requiring precise position tracking and error reporting.
+Apache-2.0
