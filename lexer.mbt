@@ -1,11 +1,13 @@
-///| Lexer implementation for TOML
+///|
+/// Lexer implementation for TOML
 #valtype
 pub(all) struct Position {
   line : Int
   column : Int
 } derive(Eq, Show, ToJson)
 
-///| Lexer state with position tracking for better error reporting
+///|
+/// Lexer state with position tracking for better error reporting
 struct Lexer {
   input : String
   mut position : Int
@@ -13,7 +15,8 @@ struct Lexer {
   mut column : Int
 }
 
-///| Get a view of the input string
+///|
+/// Get a view of the input string
 /// # Example:
 /// ```
 /// let lexer = Lexer::new("Hello, world!")
@@ -42,12 +45,14 @@ pub fn Lexer::update_view(self : Lexer, view : StringView) -> Unit {
   self.position = new_offset
 }
 
-///| Create a new lexer
+///|
+/// Create a new lexer
 pub fn Lexer::new(input : String) -> Lexer {
   { input, position: 0, line: 1, column: 1 }
 }
 
-///| Tests for lexer creation
+///|
+/// Tests for lexer creation
 test "lexer creation" {
   let lexer = Lexer::new("key = value")
   inspect(lexer.input, content="key = value")
@@ -56,7 +61,8 @@ test "lexer creation" {
   inspect(lexer.column, content="1")
 }
 
-///| Skip whitespace characters not including newlines
+///|
+/// Skip whitespace characters not including newlines
 /// Note: This method does not skip '\n' characters as those are significant in TOML
 /// # Example:
 /// ```
@@ -84,7 +90,8 @@ pub fn Lexer::skip_single_newline(self : Lexer) -> Unit {
   }
 }
 
-///| Get current character without advancing
+///|
+/// Get current character without advancing
 /// # Example:
 /// ```
 /// let lexer = Lexer::new("Hello, world!")
@@ -110,19 +117,22 @@ pub fn Lexer::get_loc(self : Lexer) -> Position {
   { line: self.line, column: self.column }
 }
 
-///| Get current position for error reporting
+///|
+/// Get current position for error reporting
 pub fn Lexer::get_position(self : Lexer) -> Int {
   self.position
 }
 
-///| Explicitly advance to a new line (call when encountering '\n')
+///|
+/// Explicitly advance to a new line (call when encountering '\n')
 /// This updates line and column tracking appropriately
 pub fn Lexer::new_line(self : Lexer) -> Unit {
   self.line += 1
   self.column = 1
 }
 
-///| Expect a specific character and advance, or fail with detailed error
+///|
+/// Expect a specific character and advance, or fail with detailed error
 pub fn Lexer::expect_char(self : Self, ch : Char, msg? : String) -> Unit raise {
   if self.peek() is Some(c) && c == ch {
     self.advance()
@@ -164,7 +174,8 @@ pub fn Lexer::expect_string(
   }
 }
 
-///| Create a detailed error message with position information
+///|
+/// Create a detailed error message with position information
 pub fn Lexer::error(self : Lexer, msg : String) -> String {
   msg +
   " at line " +
@@ -173,7 +184,8 @@ pub fn Lexer::error(self : Lexer, msg : String) -> String {
   self.column.to_string()
 }
 
-///| Get current character and advance position
+///|
+/// Get current character and advance position
 /// handle surrogate pairs and multi-byte characters
 /// Note: Does not automatically track newlines - call new_line() explicitly when needed
 pub fn Lexer::advance(self : Lexer) -> Unit {
@@ -188,7 +200,8 @@ pub fn Lexer::advance(self : Lexer) -> Unit {
   }
 }
 
-///| Test position tracking with explicit new_line() API
+///|
+/// Test position tracking with explicit new_line() API
 test "position tracking" {
   let lexer = Lexer::new("hello\nworld")
   inspect(lexer.get_loc().line, content="1")
@@ -209,7 +222,8 @@ test "position tracking" {
   inspect(lexer.get_loc().column, content="1")
 }
 
-///| Test skip whitespace with position tracking
+///|
+/// Test skip whitespace with position tracking
 test "skip whitespace with position tracking" {
   let lexer = Lexer::new("  \t\rH")
   lexer.skip_whitespace()
@@ -217,7 +231,8 @@ test "skip whitespace with position tracking" {
   inspect(lexer.peek(), content="Some('H')")
 }
 
-///| Test explicit new_line API
+///|
+/// Test explicit new_line API
 test "explicit new_line API" {
   let lexer = Lexer::new("test")
   inspect(lexer.get_loc().line, content="1")

@@ -1,4 +1,4 @@
-# bob/lexer
+# bobzhang/lexer
 
 A generic lexer library for building handwritten lexers in MoonBit. This library provides essential lexing utilities including position tracking, character advancement, whitespace handling, and error reporting.
 
@@ -14,7 +14,7 @@ A generic lexer library for building handwritten lexers in MoonBit. This library
 ## Installation
 
 ```bash
-moon add bob/lexer
+moon add bobzhang/lexer
 ```
 
 ## Types
@@ -42,6 +42,7 @@ The main lexer struct maintains state and position:
 ## Quick Start
 
 ```moonbit
+///|
 test "quick start example" {
   let lexer = Lexer::new("key = value")
 
@@ -76,6 +77,7 @@ test "quick start example" {
 ### Creating a Lexer
 
 ```moonbit
+///|
 test "creating a lexer" {
   let lexer = Lexer::new("key = value")
   inspect(lexer.get_position(), content="0")
@@ -87,6 +89,7 @@ test "creating a lexer" {
 ### Position Tracking
 
 ```moonbit
+///|
 test "position tracking example" {
   let lexer = Lexer::new("hello\nworld")
   inspect(lexer.get_loc().line, content="1")
@@ -136,6 +139,7 @@ test "position tracking example" {
 ## Core Methods
 
 ```moonbit
+///|
 test "position tracking example" {
   let lexer = Lexer::new("hello\nworld")
   inspect(lexer.get_loc().line, content="1")
@@ -158,6 +162,7 @@ test "position tracking example" {
 ### Character Access
 
 ```moonbit
+///|
 test "character access example" {
   let lexer = Lexer::new("Hello")
   inspect(lexer.peek(), content="Some('H')")
@@ -171,10 +176,11 @@ test "character access example" {
 The lexer integrates with MoonBit's string views for efficient processing:
 
 ```moonbit
+///|
 test "string views example" {
   let lexer = Lexer::new("😈x中world!")
   match lexer.view() {
-    [.."😈x", .. rest] => lexer.update_view(rest)
+    [.. "😈x", .. rest] => lexer.update_view(rest)
     _ => ()
   }
   inspect(lexer.peek(), content="Some('中')")
@@ -184,6 +190,7 @@ test "string views example" {
 ### Whitespace Handling
 
 ```moonbit
+///|
 test "whitespace handling example" {
   let lexer = Lexer::new("  \t\rHello, world!")
   lexer.skip_whitespace()
@@ -196,14 +203,15 @@ test "whitespace handling example" {
 The lexer provides methods to expect specific characters or strings:
 
 ```moonbit
+///|
 test "expectations example" {
   let lexer = Lexer::new("=true")
   // Expect a specific character
   lexer.expect_char('=', msg="Expected equals sign")
-  
+
   // Expect a string
   lexer.expect_string("true", msg="Expected boolean value")
-  
+
   // Error messages include precise position information
   let error_msg = lexer.error("Unexpected character")
   inspect(error_msg, content="Unexpected character at line 1, column 6")
@@ -217,6 +225,7 @@ test "expectations example" {
 The lexer properly handles Unicode characters including surrogate pairs:
 
 ```moonbit
+///|
 test "unicode support example" {
   let lexer = Lexer::new("😈x")
   inspect(lexer.get_position(), content="0")
@@ -231,10 +240,11 @@ test "unicode support example" {
 Get current position information:
 
 ```moonbit
+///|
 test "position management example" {
   let lexer = Lexer::new("test")
-  let pos = lexer.get_loc()           // Get Position struct
-  let offset = lexer.get_position()   // Get byte offset
+  let pos = lexer.get_loc() // Get Position struct
+  let offset = lexer.get_position() // Get byte offset
   inspect(pos.line, content="1")
   inspect(pos.column, content="1")
   inspect(offset, content="0")
@@ -244,6 +254,7 @@ test "position management example" {
 ### Position-Aware Error Handling
 
 ```moonbit
+///|
 test "position aware error handling example" {
   let lexer = Lexer::new("abc")
   lexer.advance() // move to 'b'
@@ -257,10 +268,11 @@ test "position aware error handling example" {
 ### Custom Lexer Implementation
 
 ```moonbit
+///|
 test "custom lexer implementation example" {
   let lexer = Lexer::new("a=b")
   let tokens = []
-  
+
   // Simple tokenization - process each character
   while lexer.peek() is Some(_) {
     lexer.skip_whitespace()
@@ -278,12 +290,9 @@ test "custom lexer implementation example" {
         }
         tokens.push("ID:" + identifier)
       }
-      Some(_) => {
-        lexer.advance() // skip unknown characters
-      }
+      Some(_) => lexer.advance() // skip unknown characters
     }
   }
-  
   inspect(tokens, content="[\"ID:a\", \"EQUALS\", \"ID:b\"]")
 }
 ```
@@ -291,6 +300,7 @@ test "custom lexer implementation example" {
 ## Example: Basic Parsing
 
 ```moonbit
+///|
 test "basic parsing example" {
   let lexer = Lexer::new("key = \"value\"")
 
@@ -317,7 +327,6 @@ test "basic parsing example" {
     lexer.advance()
   }
   lexer.expect_char('"')
-
   inspect(key, content="key")
   inspect(value, content="value")
 }
