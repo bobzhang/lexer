@@ -21,7 +21,7 @@ struct Lexer {
 /// lexer.advance()
 /// inspect(lexer.view(), content="llo, world!")
 /// ```
-pub fn Lexer::view(self : Lexer) -> @string.View {
+pub fn Lexer::view(self : Lexer) -> StringView {
   self.input.view(start_offset=self.position)
 }
 
@@ -36,7 +36,7 @@ pub fn Lexer::view(self : Lexer) -> @string.View {
 /// }
 /// inspect(lexer.peek(), content="Some('中')")
 /// ```
-pub fn Lexer::update_view(self : Lexer, view : @string.View) -> Unit {
+pub fn Lexer::update_view(self : Lexer, view : StringView) -> Unit {
   let new_offset = view.start_offset()
   self.column = new_offset - self.position + self.column
   self.position = new_offset
