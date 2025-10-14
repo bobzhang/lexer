@@ -6,5 +6,5 @@
   "license": "Apache-2.0",
   "keywords": ["lexer",  "programming language"],
   "description": "A generic lexer library for handwritten lexers in MoonBit",
-  "source": "src"
+  "source": "."
 }

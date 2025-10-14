@@ -72,8 +72,8 @@ Represents a position in the input with line and column information.
 
 #### String Operations
 - `expect_string(str : String, msg? : String) -> Unit raise` - Expect and consume a specific string
-- `view() -> @string.View` - Get a view of the remaining input
-- `update_view(view : @string.View) -> Unit` - Update position based on a new view
+- `view() -> StringView` - Get a view of the remaining input
+- `update_view(view : StringView) -> Unit` - Update position based on a new view
 
 #### Whitespace Handling
 - `skip_whitespace() -> Unit` - Skip spaces, tabs, and carriage returns (not newlines)
