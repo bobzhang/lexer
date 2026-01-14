@@ -104,9 +104,9 @@ pub fn Lexer::peek(self : Lexer) -> Char? {
 }
 
 ///|
-pub fn Lexer::peek_charcode(self : Lexer) -> Int? {
+pub fn Lexer::peek_charcode(self : Lexer) -> UInt16? {
   if self.position < self.input.length() {
-    Some(self.input.unsafe_charcode_at(self.position))
+    Some(self.input.unsafe_get(self.position))
   } else {
     None
   }
@@ -163,7 +163,7 @@ pub fn Lexer::expect_string(
   let saved_line = self.line
   let saved_column = self.column
   for i = 0; i < str.length(); i = i + 1 {
-    if self.peek_charcode() is Some(ch) && ch == str.unsafe_charcode_at(i) {
+    if self.peek_charcode() is Some(ch) && ch == str.unsafe_get(i) {
       self.advance()
     } else {
       self.position = saved_pos
@@ -191,7 +191,7 @@ pub fn Lexer::error(self : Lexer, msg : String) -> String {
 pub fn Lexer::advance(self : Lexer) -> Unit {
   if self.position < self.input.length() {
     self.column += 1
-    let ch = self.input.unsafe_charcode_at(self.position)
+    let ch = self.input.unsafe_get(self.position)
     if !ch.is_surrogate() {
       self.position += 1
     } else {
