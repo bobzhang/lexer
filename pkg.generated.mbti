@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "bobzhang/lexer"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 
 // Errors
@@ -25,10 +29,7 @@ pub fn Lexer::view(Self) -> StringView
 pub(all) struct Position {
   line : Int
   column : Int
-}
-pub impl Eq for Position
-pub impl Show for Position
-pub impl ToJson for Position
+} derive(Eq, ToJson, @debug.Debug)
 
 // Type aliases
 
