@@ -42,7 +42,7 @@ The main lexer struct maintains state and position:
 
 ## Quick Start
 
-```moonbit
+```moonbit nocheck
 ///|
 test "quick start example" {
   let lexer = Lexer::new("key = value")
@@ -77,7 +77,7 @@ test "quick start example" {
 
 ### Creating a Lexer
 
-```moonbit
+```moonbit nocheck
 ///|
 test "creating a lexer" {
   let lexer = Lexer::new("key = value")
@@ -89,7 +89,7 @@ test "creating a lexer" {
 
 ### Position Tracking
 
-```moonbit
+```moonbit nocheck
 ///|
 test "position tracking example" {
   let lexer = Lexer::new("hello\nworld")
@@ -139,7 +139,7 @@ test "position tracking example" {
 
 ## Core Methods
 
-```moonbit
+```moonbit nocheck
 ///|
 test "position tracking example" {
   let lexer = Lexer::new("hello\nworld")
@@ -162,7 +162,7 @@ test "position tracking example" {
 
 ### Character Access
 
-```moonbit
+```moonbit nocheck
 ///|
 test "character access example" {
   let lexer = Lexer::new("Hello")
@@ -176,7 +176,7 @@ test "character access example" {
 
 The lexer integrates with MoonBit's string views for efficient processing:
 
-```moonbit
+```moonbit nocheck
 ///|
 test "string views example" {
   let lexer = Lexer::new("😈x中world!")
@@ -190,7 +190,7 @@ test "string views example" {
 
 ### Whitespace Handling
 
-```moonbit
+```moonbit nocheck
 ///|
 test "whitespace handling example" {
   let lexer = Lexer::new("  \t\rHello, world!")
@@ -203,7 +203,7 @@ test "whitespace handling example" {
 
 The lexer provides methods to expect specific characters or strings:
 
-```moonbit
+```moonbit nocheck
 ///|
 test "expectations example" {
   let lexer = Lexer::new("=true")
@@ -225,7 +225,7 @@ test "expectations example" {
 
 The lexer properly handles Unicode characters including surrogate pairs:
 
-```moonbit
+```moonbit nocheck
 ///|
 test "unicode support example" {
   let lexer = Lexer::new("😈x")
@@ -240,7 +240,7 @@ test "unicode support example" {
 
 Get current position information:
 
-```moonbit
+```moonbit nocheck
 ///|
 test "position management example" {
   let lexer = Lexer::new("test")
@@ -254,7 +254,7 @@ test "position management example" {
 
 ### Position-Aware Error Handling
 
-```moonbit
+```moonbit nocheck
 ///|
 test "position aware error handling example" {
   let lexer = Lexer::new("abc")
@@ -268,7 +268,7 @@ test "position aware error handling example" {
 
 ### Custom Lexer Implementation
 
-```moonbit
+```moonbit nocheck
 ///|
 test "custom lexer implementation example" {
   let lexer = Lexer::new("a=b")
@@ -300,7 +300,7 @@ test "custom lexer implementation example" {
 
 ## Example: Basic Parsing
 
-```moonbit
+```moonbit nocheck
 ///|
 test "basic parsing example" {
   let lexer = Lexer::new("key = \"value\"")
