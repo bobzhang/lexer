@@ -4,7 +4,7 @@
 pub(all) struct Position {
   line : Int
   column : Int
-} derive(Eq, Show, ToJson)
+} derive(Eq, Debug, ToJson)
 
 ///|
 /// Lexer state with position tracking for better error reporting
@@ -71,10 +71,12 @@ test "lexer creation" {
 /// inspect(lexer.peek(), content="Some('H')")
 /// ```
 pub fn Lexer::skip_whitespace(self : Lexer) -> Unit {
-  let next = loop self.view() {
-    ['\r', '\n', ..] | ['\n', ..] as rest => rest
-    [' ' | '\t' | '\r', .. rest] => continue rest
-    rest => rest
+  let next = for v = self.view() {
+    match v {
+      ['\r', '\n', ..] | ['\n', ..] as rest => break rest
+      [' ' | '\t' | '\r', .. rest] => continue rest
+      rest => break rest
+    }
   }
   self.update_view(next)
 }
