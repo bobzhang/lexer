@@ -16,7 +16,7 @@ pub fn Lexer::error(Self, String) -> String
 pub fn Lexer::expect_char(Self, Char, msg? : String) -> Unit raise
 pub fn Lexer::expect_string(Self, String, msg? : String) -> Unit raise
 pub fn Lexer::get_loc(Self) -> Position
-pub fn Lexer::get_position(Self) -> Int
+pub fn Lexer::get_position(Self) -> Int32
 pub fn Lexer::new(String) -> Self
 pub fn Lexer::new_line(Self) -> Unit
 pub fn Lexer::peek(Self) -> Char?
@@ -27,11 +27,14 @@ pub fn Lexer::update_view(Self, StringView) -> Unit
 pub fn Lexer::view(Self) -> StringView
 
 pub(all) struct Position {
-  line : Int
-  column : Int
+  line : Int32
+  column : Int32
 } derive(Eq, ToJson, @debug.Debug)
+pub fn Position::equal(Self, Self) -> Bool
+pub fn Position::not_equal(Self, Self) -> Bool
+pub fn Position::to_json(Self) -> Json
+pub fn Position::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 
 // Traits
-
