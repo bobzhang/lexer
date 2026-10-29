@@ -26,8 +26,8 @@ The `Position` struct tracks location information in the input:
 ```moonbit check
 ///|
 pub(all) struct Position {
-  line : Int
-  column : Int
+  line : Int32
+  column : Int32
 } derive(Eq, Debug, ToJson)
 ```
 
@@ -45,7 +45,7 @@ The main lexer struct maintains state and position:
 ```moonbit check
 ///|
 test "quick start example" {
-  let lexer = Lexer::new("key = value")
+  let lexer = @lexer.Lexer::new("key = value")
 
   // Peek at current character without advancing
   match lexer.peek() {
@@ -80,7 +80,7 @@ test "quick start example" {
 ```moonbit check
 ///|
 test "creating a lexer" {
-  let lexer = Lexer::new("key = value")
+  let lexer = @lexer.Lexer::new("key = value")
   inspect(lexer.get_position(), content="0")
   inspect(lexer.get_loc().line, content="1")
   inspect(lexer.get_loc().column, content="1")
@@ -92,7 +92,7 @@ test "creating a lexer" {
 ```moonbit check
 ///|
 test "position tracking example" {
-  let lexer = Lexer::new("hello\nworld")
+  let lexer = @lexer.Lexer::new("hello\nworld")
   inspect(lexer.get_loc().line, content="1")
   inspect(lexer.get_loc().column, content="1")
 
@@ -142,7 +142,7 @@ test "position tracking example" {
 ```moonbit check
 ///|
 test "position tracking example v2" {
-  let lexer = Lexer::new("hello\nworld")
+  let lexer = @lexer.Lexer::new("hello\nworld")
   inspect(lexer.get_loc().line, content="1")
   inspect(lexer.get_loc().column, content="1")
 
@@ -165,10 +165,10 @@ test "position tracking example v2" {
 ```moonbit check
 ///|
 test "character access example" {
-  let lexer = Lexer::new("Hello")
-  inspect(lexer.peek(), content="Some('H')")
+  let lexer = @lexer.Lexer::new("Hello")
+  debug_inspect(lexer.peek(), content="Some('H')")
   lexer.advance()
-  inspect(lexer.peek(), content="Some('e')")
+  debug_inspect(lexer.peek(), content="Some('e')")
 }
 ```
 
@@ -179,12 +179,12 @@ The lexer integrates with MoonBit's string views for efficient processing:
 ```moonbit check
 ///|
 test "string views example" {
-  let lexer = Lexer::new("😈x中world!")
+  let lexer = @lexer.Lexer::new("😈x中world!")
   match lexer.view() {
     [.. "😈x", .. rest] => lexer.update_view(rest)
     _ => ()
   }
-  inspect(lexer.peek(), content="Some('中')")
+  debug_inspect(lexer.peek(), content="Some('中')")
 }
 ```
 
@@ -193,9 +193,9 @@ test "string views example" {
 ```moonbit check
 ///|
 test "whitespace handling example" {
-  let lexer = Lexer::new("  \t\rHello, world!")
+  let lexer = @lexer.Lexer::new("  \t\rHello, world!")
   lexer.skip_whitespace()
-  inspect(lexer.peek(), content="Some('H')")
+  debug_inspect(lexer.peek(), content="Some('H')")
 }
 ```
 
@@ -206,7 +206,7 @@ The lexer provides methods to expect specific characters or strings:
 ```moonbit check
 ///|
 test "expectations example" {
-  let lexer = Lexer::new("=true")
+  let lexer = @lexer.Lexer::new("=true")
   // Expect a specific character
   lexer.expect_char('=', msg="Expected equals sign")
 
@@ -228,11 +228,11 @@ The lexer properly handles Unicode characters including surrogate pairs:
 ```moonbit check
 ///|
 test "unicode support example" {
-  let lexer = Lexer::new("😈x")
+  let lexer = @lexer.Lexer::new("😈x")
   inspect(lexer.get_position(), content="0")
   lexer.advance() // Correctly advances past the 2-byte emoji
   inspect(lexer.get_position(), content="2") // 2 bytes for emoji
-  inspect(lexer.peek(), content="Some('x')")
+  debug_inspect(lexer.peek(), content="Some('x')")
 }
 ```
 
@@ -243,7 +243,7 @@ Get current position information:
 ```moonbit check
 ///|
 test "position management example" {
-  let lexer = Lexer::new("test")
+  let lexer = @lexer.Lexer::new("test")
   let pos = lexer.get_loc() // Get Position struct
   let offset = lexer.get_position() // Get byte offset
   inspect(pos.line, content="1")
@@ -257,7 +257,7 @@ test "position management example" {
 ```moonbit check
 ///|
 test "position aware error handling example" {
-  let lexer = Lexer::new("abc")
+  let lexer = @lexer.Lexer::new("abc")
   lexer.advance() // move to 'b'
   lexer.advance() // move to 'c'
   let start_pos = lexer.get_loc()
@@ -271,7 +271,7 @@ test "position aware error handling example" {
 ```moonbit check
 ///|
 test "custom lexer implementation example" {
-  let lexer = Lexer::new("a=b")
+  let lexer = @lexer.Lexer::new("a=b")
   let tokens = []
 
   // Simple tokenization - process each character
@@ -294,7 +294,7 @@ test "custom lexer implementation example" {
       Some(_) => lexer.advance() // skip unknown characters
     }
   }
-  inspect(tokens, content="[\"ID:a\", \"EQUALS\", \"ID:b\"]")
+  debug_inspect(tokens, content="[\"ID:a\", \"EQUALS\", \"ID:b\"]")
 }
 ```
 
@@ -303,7 +303,7 @@ test "custom lexer implementation example" {
 ```moonbit check
 ///|
 test "basic parsing example" {
-  let lexer = Lexer::new("key = \"value\"")
+  let lexer = @lexer.Lexer::new("key = \"value\"")
 
   // Skip initial whitespace
   lexer.skip_whitespace()

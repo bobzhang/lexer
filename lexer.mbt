@@ -2,17 +2,17 @@
 /// Lexer implementation for TOML
 #valtype
 pub(all) struct Position {
-  line : Int
-  column : Int
+  line : Int32
+  column : Int32
 } derive(Eq, Debug, ToJson)
 
 ///|
 /// Lexer state with position tracking for better error reporting
 struct Lexer {
   input : String
-  mut position : Int
-  mut line : Int
-  mut column : Int
+  mut position : Int32
+  mut line : Int32
+  mut column : Int32
 }
 
 ///|
@@ -37,7 +37,7 @@ pub fn Lexer::view(self : Lexer) -> StringView {
 ///  [.."😈x", .. rest] => lexer.update_view(rest)
 ///  _ => ()
 /// }
-/// inspect(lexer.peek(), content="Some('中')")
+/// debug_inspect(lexer.peek(), content="Some('中')")
 /// ```
 pub fn Lexer::update_view(self : Lexer, view : StringView) -> Unit {
   let new_offset = view.start_offset()
@@ -48,7 +48,7 @@ pub fn Lexer::update_view(self : Lexer, view : StringView) -> Unit {
 ///|
 /// Create a new lexer
 pub fn Lexer::new(input : String) -> Lexer {
-  { input, position: 0, line: 1, column: 1 }
+  { input, position: 0, line: 1, column: 1, }
 }
 
 ///|
@@ -68,7 +68,7 @@ test "lexer creation" {
 /// ```
 /// let lexer = Lexer::new("  \t\rHello, world!")
 /// lexer.skip_whitespace()
-/// inspect(lexer.peek(), content="Some('H')")
+/// debug_inspect(lexer.peek(), content="Some('H')")
 /// ```
 pub fn Lexer::skip_whitespace(self : Lexer) -> Unit {
   let next = for v = self.view() {
@@ -97,9 +97,9 @@ pub fn Lexer::skip_single_newline(self : Lexer) -> Unit {
 /// # Example:
 /// ```
 /// let lexer = Lexer::new("Hello, world!")
-/// inspect(lexer.peek(), content="Some('H')")
+/// debug_inspect(lexer.peek(), content="Some('H')")
 /// lexer.advance()
-/// inspect(lexer.peek(), content="Some('e')")
+/// debug_inspect(lexer.peek(), content="Some('e')")
 /// ```
 pub fn Lexer::peek(self : Lexer) -> Char? {
   self.input.get_char(self.position)
@@ -116,12 +116,12 @@ pub fn Lexer::peek_charcode(self : Lexer) -> UInt16? {
 
 ///|
 pub fn Lexer::get_loc(self : Lexer) -> Position {
-  { line: self.line, column: self.column }
+  { line: self.line, column: self.column, }
 }
 
 ///|
 /// Get current position for error reporting
-pub fn Lexer::get_position(self : Lexer) -> Int {
+pub fn Lexer::get_position(self : Lexer) -> Int32 {
   self.position
 }
 
@@ -230,7 +230,7 @@ test "skip whitespace with position tracking" {
   let lexer = Lexer::new("  \t\rH")
   lexer.skip_whitespace()
   inspect(lexer.get_loc().column, content="5") // moved past 4 whitespace chars
-  inspect(lexer.peek(), content="Some('H')")
+  debug_inspect(lexer.peek(), content="Some('H')")
 }
 
 ///|
