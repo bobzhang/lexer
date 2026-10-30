@@ -25,7 +25,7 @@ struct Lexer {
 /// inspect(lexer.view(), content="llo, world!")
 /// ```
 pub fn Lexer::view(self : Lexer) -> StringView {
-  self.input.view(start_offset=self.position)
+  self.input[self.position:]
 }
 
 ///|
