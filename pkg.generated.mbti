@@ -3,6 +3,7 @@ package "bobzhang/lexer"
 
 import {
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -26,13 +27,14 @@ pub fn Lexer::skip_whitespace(Self) -> Unit
 pub fn Lexer::update_view(Self, StringView) -> Unit
 pub fn Lexer::view(Self) -> StringView
 
+#derive(Eq, @debug.Debug, @json.ToJson)
 pub(all) struct Position {
   line : Int32
   column : Int32
-} derive(Eq, ToJson, @debug.Debug)
+}
 pub fn Position::equal(Self, Self) -> Bool
 pub fn Position::not_equal(Self, Self) -> Bool
-pub fn Position::to_json(Self) -> Json
+pub fn Position::to_json(Self) -> @json.Json
 pub fn Position::to_repr(Self) -> @debug.Repr
 
 // Type aliases

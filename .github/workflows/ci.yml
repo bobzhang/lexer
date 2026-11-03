@@ -9,6 +9,10 @@ on:
 
 jobs:
   misc-check:
+    strategy:
+      fail-fast: false
+      matrix:
+        moonbit: [latest, pre-release]
     runs-on: ubuntu-latest
     env:
       FORCE_COLOR: 1
@@ -16,25 +20,25 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - name: install moonbit
         run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s -- nightly
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s -- "${{ matrix.moonbit }}"
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
       - name: format diff
         run: moon fmt && git diff --exit-code
 
       - name: lint
         run: moon check --deny-warn
-      
+
       - name: moon info
         run: |
           moon info --target wasm,wasm-gc,js,native
           git diff --exit-code
-      
-      - name: moon test          
+
+      - name: moon test
         run: moon test
-        
+
       # - name: moon test
       #   run: moon test --enable-coverage
 
@@ -53,4 +57,4 @@ jobs:
       #       --send-to coveralls
       #   env:
       #     COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+

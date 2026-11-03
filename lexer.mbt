@@ -1,10 +1,11 @@
 ///|
 /// Lexer implementation for TOML
+#derive(Eq, Debug, ToJson)
 #valtype
 pub(all) struct Position {
   line : Int32
   column : Int32
-} derive(Eq, Debug, ToJson)
+}
 
 ///|
 /// Lexer state with position tracking for better error reporting
